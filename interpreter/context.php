@@ -235,6 +235,13 @@ class kaforkl_Context
                 $green,
                 $this->stack[$green]
             );
+
+            if ( $fork )
+            {
+                printf( "   -> Move: %d\n",
+                    $red
+                );
+            }
         }
 
         // If not skipped by conditions fork processor

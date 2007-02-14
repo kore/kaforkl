@@ -98,7 +98,6 @@ class kaforkl_Position
                 break;
             case 4:
                 $this->x = ( $this->x + $stepSize % $this->width ) % $this->width;
-                $this->y = ( $this->y - $stepSize + $this->height ) % $this->height;
                 $directionString = 'E';
                 break;
             case 8:
@@ -111,16 +110,16 @@ class kaforkl_Position
                 $directionString = 'S';
                 break;
             case 32:
-                $this->x = ( $this->x - $stepSize + $this-width ) % $this->width;
+                $this->x = ( $this->x - $stepSize + $this->width ) % $this->width;
                 $this->y = ( $this->y + $stepSize % $this->height ) % $this->height;
                 $directionString = 'SW';
                 break;
             case 64:
-                $this->x = ( $this->x - $stepSize + $this-width ) % $this->width;
+                $this->x = ( $this->x - $stepSize + $this->width ) % $this->width;
                 $directionString = 'W';
                 break;
             case 128:
-                $this->x = ( $this->x - $stepSize + $this-width ) % $this->width;
+                $this->x = ( $this->x - $stepSize + $this->width ) % $this->width;
                 $this->y = ( $this->y - $stepSize + $this->height ) % $this->height;
                 $directionString = 'NW';
                 break;
