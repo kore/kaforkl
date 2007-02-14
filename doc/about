@@ -36,7 +36,9 @@ Alpha
 The alpha value of a pixel defines a command:
 
 - Simple Operations
-  - 0: Do nothing
+  - 0: Just fork
+  - 1: Jump, use variable as jump width
+  - 2: Jump, use value as jump width
 - IO operations
   - 10: Write value
   - 11: Write variable content
@@ -58,6 +60,15 @@ The alpha value of a pixel defines a command:
   - 35: Add value to variable
   - 36: Substract value from variable
   - 37: Multiply variable by value
+- Image manipulations
+  - 40: Write value to red channel
+  - 41: Write value to green channel
+  - 42: Write value to blue channel
+  - 43: Write value to alpha channel
+  - 45: Write variable content to red channel
+  - 46: Write variable content to green channel
+  - 47: Write variable content to blue channel
+  - 48: Write variable content to alpha channel
 
 The interpretor
 ===============

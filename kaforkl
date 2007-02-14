@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+set_include_path( dirname( __FILE__ ) . '/' );
+
+require_once( 'interpreter/main.php' );
+new kaforkl_Main( $argv );
+
