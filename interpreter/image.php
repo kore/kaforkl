@@ -39,6 +39,13 @@ abstract class kaforkl_Image
     protected $processors;
 
     /**
+     * Maximum count of interpreter steps
+     * 
+     * @var int
+     */
+    protected $maxStepCount = false;
+
+    /**
      * Red channel
      */
     const RED = 0;
@@ -131,6 +138,17 @@ abstract class kaforkl_Image
     }
 
     /**
+     * Set maximum count of interpretor steps
+     * 
+     * @param int $stepCount 
+     * @return void
+     */
+    public function setMaxSteps( $stepCount )
+    {
+        $this->maxStepCount = $stepCount;
+    }
+
+    /**
      * Add a new processor
      * 
      * @param kaforkl_Context $context 
@@ -169,11 +187,18 @@ abstract class kaforkl_Image
 
             foreach ( $this->processors as $nr => $context )
             {
+                // Test for max step count
+                if ( ( $this->maxStepCount !== false ) && ( $nr >= $this->maxStepCount ) )
+                {
+                    break 2;
+                }
+
                 if ( DEBUG )
                 {
                     printf( "Running %d\n", $nr );
                 }
 
+                // Process current processor
                 $position = $context->getPosition();
                 call_user_func_array( 
                     array( $context, 'process' ),

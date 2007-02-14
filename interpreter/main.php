@@ -50,6 +50,12 @@ class kaforkl_Main
             'desc' => 'Enable debug mode when set to 1',
             'default' => false,
         ),
+        'max' => array(
+            'short' => 'm',
+            'type' => 'int',
+            'desc' => 'Maximum count of processing steps',
+            'default' => false,
+        ),
     );
 
     /**
@@ -78,6 +84,13 @@ class kaforkl_Main
 
         require_once $handlerFileName;
         $handler = new $handlerClassName( $cliValues['input'] );
+
+        if ( $cliValues['max'] !== false )
+        {
+            $handler->setMaxSteps( $cliValues['max'] );
+        }
+
+        // Run interpreter
         $handler->run( $match[1], $match[2] );
     }
 
