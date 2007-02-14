@@ -27,7 +27,7 @@ class kaforkl_Main
             'default' => false,
         ),
         'start' => array(
-            'short' => 'o',
+            'short' => 's',
             'type' => 'string',
             'desc' => 'Start coordinate',
             'default' => '0,0',
