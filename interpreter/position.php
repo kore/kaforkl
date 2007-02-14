@@ -92,27 +92,27 @@ class kaforkl_Position
                 $directionString = 'N';
                 break;
             case 2:
-                $this->x = $this->x + $stepSize % $this->width;
+                $this->x = ( $this->x + $stepSize % $this->width ) % $this->width;
                 $this->y = ( $this->y - $stepSize + $this->height ) % $this->height;
                 $directionString = 'NE';
                 break;
             case 4:
-                $this->x = $this->x + $stepSize % $this->width;
+                $this->x = ( $this->x + $stepSize % $this->width ) % $this->width;
                 $this->y = ( $this->y - $stepSize + $this->height ) % $this->height;
                 $directionString = 'E';
                 break;
             case 8:
-                $this->x = $this->x + $stepSize % $this->width;
-                $this->y = $this->y + $stepSize % $this->height;
+                $this->x = ( $this->x + $stepSize % $this->width ) % $this->width;
+                $this->y = ( $this->y + $stepSize % $this->height ) % $this->height;
                 $directionString = 'SE';
                 break;
             case 16:
-                $this->y = $this->y + $stepSize % $this->height;
+                $this->y = ( $this->y + $stepSize % $this->height ) % $this->height;
                 $directionString = 'S';
                 break;
             case 32:
                 $this->x = ( $this->x - $stepSize + $this-width ) % $this->width;
-                $this->y = $this->y + $stepSize % $this->height;
+                $this->y = ( $this->y + $stepSize % $this->height ) % $this->height;
                 $directionString = 'SW';
                 break;
             case 64:
@@ -128,10 +128,14 @@ class kaforkl_Position
 
         if ( DEBUG )
         {
-            printf( " -> Move %s (%d) (Step size: %d)\n",
+            printf( " -> Move %s (%d) (Step size: %d) => %d, %d (%d, %d)\n",
                 $directionString,
                 $direction,
-                $stepSize
+                $stepSize,
+                $this->x,
+                $this->y,
+                $this->width,
+                $this->height
             );
         }
     }
