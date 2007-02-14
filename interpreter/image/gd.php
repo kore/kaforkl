@@ -36,11 +36,12 @@ class kaforkl_Image_GD extends kaforkl_Image
             for ( $y = 0; $y < $this->height; ++$y )
             {
                 $color = imagecolorat( $image, $x, $y );
+
                 $this->valueArray[$x][$y] = array(
                     kaforkl_Image::RED  => ( $color & 0xFF0000 ) >> 16,
                     kaforkl_Image::GREEN  => ( $color & 0xFF00 ) >> 8,
                     kaforkl_Image::BLUE  => $color & 0xFF,
-                    kaforkl_Image::ALPHA  => ( $color & 0x7F000000 ) >> 24,
+                    kaforkl_Image::ALPHA  => ( $color & 0xFF000000 ) >> 24,
                 );
             }
         }

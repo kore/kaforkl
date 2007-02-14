@@ -44,6 +44,12 @@ class kaforkl_Main
             'desc' => 'Offset for values and commands',
             'default' => 0,
         ),
+        'debug' => array(
+            'short' => 'd',
+            'type' => 'boolean',
+            'desc' => 'Enable debug mode when set to 1',
+            'default' => false,
+        ),
     );
 
     /**
@@ -62,6 +68,9 @@ class kaforkl_Main
             echo "Could not parse coordinate ", $cliValues['start'], "\n\n";
             $this->showHelp();
         }
+
+        // Set debug mode
+        define( 'DEBUG', $cliValues['debug'] );
 
         // Build image handler
         $handlerClassName = 'kaforkl_Image_' . $cliValues['handler'];
@@ -89,15 +98,11 @@ class kaforkl_Main
         {
             $optionsLong[$long] = $long;
             $types[$long] = $data['type'];
+            $cliValues[$long] = $data['default'];
 
             if ( $data['short'] )
             {
                 $optionsShort[$data['short']] = $long;
-            }
-
-            if ( $data['default'] )
-            {
-                $cliValues[$long] = $data['default'];
             }
         }
 

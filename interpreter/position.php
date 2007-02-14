@@ -89,33 +89,50 @@ class kaforkl_Position
         {
             case 1:
                 $this->y = ( $this->y - $stepSize + $this->height ) % $this->height;
+                $directionString = 'N';
                 break;
             case 2:
                 $this->x = $this->x + $stepSize % $this->width;
                 $this->y = ( $this->y - $stepSize + $this->height ) % $this->height;
+                $directionString = 'NE';
                 break;
             case 4:
                 $this->x = $this->x + $stepSize % $this->width;
                 $this->y = ( $this->y - $stepSize + $this->height ) % $this->height;
+                $directionString = 'E';
                 break;
             case 8:
                 $this->x = $this->x + $stepSize % $this->width;
                 $this->y = $this->y + $stepSize % $this->height;
+                $directionString = 'SE';
                 break;
             case 16:
                 $this->y = $this->y + $stepSize % $this->height;
+                $directionString = 'S';
                 break;
             case 32:
                 $this->x = ( $this->x - $stepSize + $this-width ) % $this->width;
                 $this->y = $this->y + $stepSize % $this->height;
+                $directionString = 'SW';
                 break;
             case 64:
                 $this->x = ( $this->x - $stepSize + $this-width ) % $this->width;
+                $directionString = 'W';
                 break;
             case 128:
                 $this->x = ( $this->x - $stepSize + $this-width ) % $this->width;
                 $this->y = ( $this->y - $stepSize + $this->height ) % $this->height;
+                $directionString = 'NW';
                 break;
+        }
+
+        if ( DEBUG )
+        {
+            printf( " -> Move %s (%d) (Step size: %d)\n",
+                $directionString,
+                $direction,
+                $stepSize
+            );
         }
     }
 }

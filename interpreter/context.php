@@ -41,7 +41,7 @@ class kaforkl_Context
     public function __construct( kaforkl_Image $image, kaforkl_Position $position )
     {
         $this->image = $image;
-        $this->stack = array();
+        $this->stack = array( false );
         $this->position = $position;
     }
 
@@ -66,6 +66,16 @@ class kaforkl_Context
      */
     public function process( $red, $green, $blue, $alpha )
     {
+        if ( DEBUG )
+        {
+            printf( " -> Command: %d (Value: %d; Var: %d (%d))\n",
+                $alpha,
+                $blue,
+                $green,
+                $this->stack[$green]
+            );
+        }
+
         // Update context accordingly to parameters
         $fork = true;
         $stepSize = 1;

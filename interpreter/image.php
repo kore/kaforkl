@@ -94,7 +94,7 @@ abstract class kaforkl_Image
      */
     public function setRedValue( kaforkl_Position $position, $value )
     {
-        $this->valueArray[$position->x][$position->y][self::RED] = $value;
+        $this->valueArray[$position->getX()][$position->getY()][self::RED] = $value;
     }
 
     /**
@@ -105,7 +105,7 @@ abstract class kaforkl_Image
      */
     public function setGreenValue( kaforkl_Position $position, $value )
     {
-        $this->valueArray[$position->x][$position->y][self::GREEN] = $value;
+        $this->valueArray[$position->getX()][$position->getY()][self::GREEN] = $value;
     }
 
     /**
@@ -116,7 +116,7 @@ abstract class kaforkl_Image
      */
     public function setBlueValue( kaforkl_Position $position, $value )
     {
-        $this->valueArray[$position->x][$position->y][self::BLUE] = $value;
+        $this->valueArray[$position->getX()][$position->getY()][self::BLUE] = $value;
     }
 
     /**
@@ -127,7 +127,7 @@ abstract class kaforkl_Image
      */
     public function setAlphaValue( kaforkl_Position $position, $value )
     {
-        $this->valueArray[$position->x][$position->y][self::ALPHA] = $value;
+        $this->valueArray[$position->getX()][$position->getY()][self::ALPHA] = $value;
     }
 
     /**
@@ -162,12 +162,22 @@ abstract class kaforkl_Image
 
         // Start processing
         do {
+            if ( DEBUG )
+            {
+                echo "\nNext step:\n";
+            }
+
             foreach ( $this->processors as $nr => $context )
             {
+                if ( DEBUG )
+                {
+                    printf( "Running %d\n", $nr );
+                }
+
                 $position = $context->getPosition();
                 call_user_func_array( 
                     array( $context, 'process' ),
-                    $this->valueArray[$position->x][$position->y]
+                    $this->valueArray[$position->getX()][$position->getY()]
                 );
 
                 // Processor fork or dies
