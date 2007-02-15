@@ -1,0 +1,64 @@
+#!/usr/bin/env php
+<?php
+
+// Read csv file
+$csv = fopen( $argv[1], 'r' );
+$width = 0;
+$data = array();
+
+while ( ( $row = fgetcsv( $csv, 1000, ';' ) ) !== false )
+{
+    $rowCount = count( $row );
+
+    if ( $rowCount > $width )
+    {
+        $width = $rowCount;
+    }
+
+    $converted = array();
+    foreach ( $row as $value )
+    {
+        if ( empty( $value ) )
+        {
+            $converted[] = array( 0, 0, 0, 1 );
+        }
+        else
+        {
+            list( $r, $g, $b, $a ) = explode( ',', $value );
+            $converted[] = array(
+                (int) $r,
+                (int) $g,
+                (int) $b,
+                1 - $a / 255 * 2,
+            );
+        }
+    }
+
+    $data[] = $converted;
+}
+
+// Write image
+$height = count( $data );
+$filename = $argv[2];
+
+$cmd = "convert -size {$width}x{$height} xc:transparent -type TrueColorMatte";
+
+// Default background to black
+for ( $y = 0; $y < $height; ++$y )
+{
+    for ( $x = 0; $x < $width; ++$x )
+    {
+        if ( isset( $data[$y][$x] ) )
+        {
+            $cmd .= " -fill \"rgba(" . implode( ',', $data[$y][$x] ) . ")\" -draw \"point {$x},{$y}\"";
+        }
+        else
+        {
+            $cmd .= " -fill \"rgba(0,0,0,0)\" -draw \"point {$x},{$y}\"";
+        }
+    }
+}
+$cmd .= ' ' . $filename;
+echo $cmd, "\n";
+shell_exec( $cmd );
+
