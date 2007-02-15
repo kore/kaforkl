@@ -6,7 +6,7 @@ $csv = fopen( $argv[1], 'r' );
 $width = 0;
 $data = array();
 
-while ( ( $row = fgetcsv( $csv, 1000, ';' ) ) !== false )
+while ( ( $row = fgetcsv( $csv, 4096, ';' ) ) !== false )
 {
     $rowCount = count( $row );
 
@@ -41,11 +41,12 @@ while ( ( $row = fgetcsv( $csv, 1000, ';' ) ) !== false )
 $height = count( $data );
 $filename = $argv[2];
 
-$cmd = "convert -size {$width}x{$height} xc:transparent -type TrueColorMatte";
+shell_exec( "convert -size {$width}x{$height} xc:transparent -type TrueColorMatte $filename" );
 
 // Default background to black
 for ( $y = 0; $y < $height; ++$y )
 {
+    $cmd = "convert $filename";
     for ( $x = 0; $x < $width; ++$x )
     {
         if ( isset( $data[$y][$x] ) )
@@ -57,8 +58,7 @@ for ( $y = 0; $y < $height; ++$y )
             $cmd .= " -fill \"rgba(0,0,0,0)\" -draw \"point {$x},{$y}\"";
         }
     }
+    $cmd .= ' ' . $filename;
+    shell_exec( $cmd );
 }
-$cmd .= ' ' . $filename;
-echo $cmd, "\n";
-shell_exec( $cmd );
 
