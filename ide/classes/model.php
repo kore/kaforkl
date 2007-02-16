@@ -1,6 +1,8 @@
 <?php
 
 require_once 'interpreter/image.php';
+require_once 'interpreter/context.php';
+require_once 'interpreter/position.php';
 
 /**
  * KaForkL IDE image model
@@ -12,6 +14,36 @@ require_once 'interpreter/image.php';
  */
 class kaforkl_ImageModel extends kaforkl_Image
 {
+    /**
+     * Direction checkbox association
+     * 
+     * @var array
+     */
+    protected static $redCheckBoxes = array(
+        1 => 'red_value_n',
+        2 => 'red_value_ne',
+        4 => 'red_value_e',
+        8 => 'red_value_se',
+        16 => 'red_value_s',
+        32 => 'red_value_sw',
+        64 => 'red_value_w',
+        128 => 'red_value_nw',
+    );
+
+    /**
+     * Selected pixel 
+     * 
+     * @var null
+     */
+    protected $xSelected;
+
+    /**
+     * Selected pixel 
+     * 
+     * @var null
+     */
+    protected $ySelected;
+
     /**
      * Fill up value array from image
      * 
@@ -61,23 +93,28 @@ class kaforkl_ImageModel extends kaforkl_Image
         // Not yet implemented
     }
 
-    public function updateWidget()
+    /**
+     * Returns the current zoom multiplier
+     * 
+     * @return int
+     */
+    protected function getCurrentZoomFactor()
     {
-        $widget = kaforkl_IdeMain::$glade->get_widget( 'drawingarea' );
-
-        // Gett zoom factor
         $zoom = kaforkl_IdeMain::$glade->get_widget( 'zoom' )->get_active_text();
         if ( $zoom === null )
         {
-            $zoom = 5;
+            return 10; // Default zoom
         }
         else
         {
-            $zoom = (int) $zoom / 100;
+            return (int) $zoom / 100;
         }
+    }
 
-        // Create image to display with gd
-        $image = imagecreatetruecolor( $this->width * $zoom, $this->height *$zoom );
+    public function updateWidget()
+    {
+        // Recreate image to display with gd
+        $image = imagecreatetruecolor( $this->width, $this->height );
         imagesavealpha( $image, true );
 
         for ( $x = 0; $x < $this->width; ++$x )
@@ -92,24 +129,137 @@ class kaforkl_ImageModel extends kaforkl_Image
                     $this->valueArray[$x][$y][kaforkl_Image::ALPHA]
                 );
 
-                if ( $zoom === 1 )
-                {
-                    imagesetpixel( $image, $x, $y, $color );
-                }
-                else
-                {
-                    imagefilledrectangle( 
-                        $image,
-                        $x * $zoom, $y * $zoom,
-                        $x * $zoom + $zoom - 1, $y * $zoom + $zoom - 1,
-                        $color
-                    );
-                }
+                imagesetpixel( $image, $x, $y, $color );
             }
         }
 
         imagepng( $image, $tmpFile = dirname( __FILE__ ) . '/../data/tmp.png' );
-        $widget->set_from_file( $tmpFile );
+
+        // Get zoom factor
+        $zoom = $this->getCurrentZoomFactor();
+
+        // Scale using pixbuf scaling
+        $pixbuf = GDKPixbuf::new_from_file( $tmpFile );
+        $pixbuf = $pixbuf->scale_simple( $this->width * $zoom, $this->height * $zoom, Gdk::INTERP_TILES );
+
+        $widget = kaforkl_IdeMain::$glade->get_widget( 'drawingarea' );
+        $widget->set_from_pixbuf( $pixbuf );
+    }
+
+    /**
+     * Evaluate click and select the clicked pixel and display its values
+     * 
+     * @param GtkWidget $widget 
+     * @param GtkEvent $event 
+     * @return void
+     */
+    public function selectPixel( $widget, $event )
+    {
+        $viewport = kaforkl_IdeMain::$glade->get_widget( 'drawing_viewport' );
+        $widgetSize = $viewport->get_allocation();
+
+        $zoom = $this->getCurrentZoomFactor();
+        $width = $this->width * $zoom;
+        $height = $this->height * $zoom;
+
+        $xOffset = max( 0, ( $widgetSize->width - $width ) / 2 ) - $widget->get_hadjustment()->value;
+        $yOffset = max( 0, ( $widgetSize->height - $height ) / 2 ) - $widget->get_vadjustment()->value;
+
+        $this->xSelected = floor( ( $event->x - $xOffset ) / $zoom );
+        $this->ySelected = floor( ( $event->y - $yOffset ) / $zoom );
+
+        if ( isset( $this->valueArray[$this->xSelected] ) 
+          && isset( $this->valueArray[$this->xSelected][$this->ySelected] ) )
+        {
+            $values = $this->valueArray[$this->xSelected][$this->ySelected];
+
+            $green = kaforkl_IdeMain::$glade->get_widget( 'green_value' );
+            $green->set_value( $values[kaforkl_Image::GREEN] );
+
+            $blue = kaforkl_IdeMain::$glade->get_widget( 'blue_value' );
+            $blue->set_value( $values[kaforkl_Image::BLUE] );
+
+            $alpha = kaforkl_IdeMain::$glade->get_widget( 'alpha_value' );
+            $alpha->set_value( $values[kaforkl_Image::ALPHA] );
+
+            // Update all direction checkboxes
+            for ( $i = 1; $i < 256; $i = $i << 1 )
+            {
+                $checkbox = kaforkl_IdeMain::$glade->get_widget( self::$redCheckBoxes[$i] );
+                $checkbox->set_active( $values[kaforkl_Image::RED] & $i );
+            }
+        }
+    }
+
+    /**
+     * Pixel information were update - update model and GUI
+     * 
+     * @param int $color 
+     * @param int $direction 
+     * @return void
+     */
+    public function updatePixel( $color, $direction = 0 )
+    {
+        switch ( $color )
+        {
+            case kaforkl_Image::RED:
+                $value = 0;
+                for ( $i = 1; $i < 256; $i = $i << 1 )
+                {
+                    $checkbox = kaforkl_IdeMain::$glade->get_widget( self::$redCheckBoxes[$i] );
+                    if ( $checkbox->get_active() )
+                    {
+                        $value |= $i;
+                    }
+                }
+
+                $this->valueArray[$this->xSelected][$this->ySelected][kaforkl_Image::RED] = $value;
+                break;
+            case kaforkl_Image::GREEN:
+                $green = kaforkl_IdeMain::$glade->get_widget( 'green_value' );
+                $value = $green->get_value();
+
+                $this->valueArray[$this->xSelected][$this->ySelected][kaforkl_Image::GREEN] = $value;
+                break;
+            case kaforkl_Image::BLUE:
+                $blue = kaforkl_IdeMain::$glade->get_widget( 'blue_value' );
+                $value = $blue->get_value();
+
+                if ( $value > 31 && $value < 127 )
+                {
+                    $char = chr( $value );
+                }
+                else
+                {
+                    $char = 'Non readable';
+                }
+
+                $blueLabel = kaforkl_IdeMain::$glade->get_widget( 'blue_label' );
+                $blueLabel->set_label( 'Char: ' . $char );
+
+                $this->valueArray[$this->xSelected][$this->ySelected][kaforkl_Image::BLUE] = $value;
+                break;
+            case kaforkl_Image::ALPHA:
+                $alpha = kaforkl_IdeMain::$glade->get_widget( 'alpha_value' );
+                $value = $alpha->get_value();
+
+                if ( isset( kaforkl_Context::$commandString[$value] ) )
+                {
+                    $command = kaforkl_Context::$commandString[$value];
+                }
+                else
+                {
+                    $command = kaforkl_Context::$commandString[0];
+                }
+
+                $alphaLabel = kaforkl_IdeMain::$glade->get_widget( 'alpha_label' );
+                $alphaLabel->set_label( $command );
+
+                $this->valueArray[$this->xSelected][$this->ySelected][kaforkl_Image::ALPHA] = $value;
+                break;
+        }
+
+        $this->updateWidget();
     }
 
     /**
