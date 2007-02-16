@@ -48,11 +48,11 @@ class kaforkl_Image_GD extends kaforkl_Image
     }
 
     /**
-     * Fill up value array from image
+     * Write processed image back to a file
      * 
      * @param string $fileName 
      */
-    protected function writeFile( $fileName )
+    public function writeFile( $fileName )
     {
         $image = imagecreatetruecolor( $this->width, $this->height );
         imagesavealpha( $image, true );

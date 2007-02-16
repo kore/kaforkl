@@ -87,11 +87,11 @@ abstract class kaforkl_Image
     abstract protected function readFile( $fileName );
 
     /**
-     * Fill up value array from image
+     * Write processed image back to a file
      * 
      * @param string $fileName 
      */
-    abstract protected function writeFile( $fileName );
+    abstract public function writeFile( $fileName );
 
     /**
      * Set red value on position
