@@ -31,6 +31,38 @@ class kaforkl_Context
      */
     protected $image;
 
+    public static $commandString = array(
+        0  => 'None',
+        1  => 'Var Jump',
+        2  => 'Value Jump',
+        10 => 'Echo Value',
+        11 => 'Echo Var',
+        15 => 'Read Var',
+        16 => 'Read Value to Var',
+        20 => 'EQ',
+        21 => 'NE',
+        22 => 'LT',
+        23 => 'GT',
+        24 => 'LE',
+        25 => 'GE',
+        30 => '<<',
+        31 => '>>',
+        32 => 'AND',
+        33 => 'OR',
+        34 => 'XOR',
+        35 => 'ADD',
+        36 => 'SUB',
+        37 => 'MUL',
+        40 => 'Red Value',
+        41 => 'Green Value',
+        42 => 'Blue Value',
+        43 => 'Alpha Value',
+        45 => 'Red Var',
+        46 => 'Green Var',
+        47 => 'Blue Var',
+        48 => 'Alpha Var',
+    );
+
     /**
      * Build initial context
      * 
@@ -80,78 +112,65 @@ class kaforkl_Context
         $fork = true;
         $stepSize = 1;
 
-        switch ( true )
+        switch ( $alpha )
         {
             // Walking options
-            case ( $alpha === 0 ):
+            case 0:
                 // Just walk
-                $cmdString = 'None';
                 break;
-            case ( $alpha === 1 ):
+            case 1:
                 $stepSize = $this->stack[$green];
-                $cmdString = 'Var Jump';
                 break;
-            case ( $alpha === 2 ):
+            case 2:
                 $stepSize = $blue;
-                $cmdString = 'Value Jump';
                 break;
 
             // IO operations
-            case ( $alpha === 10 ):
-                $cmdString = 'Echo Value';
+            case 10:
                 echo chr( $blue );
                 break;
-            case ( $alpha === 11 ):
-                $cmdString = 'Echo Var';
+            case 11:
                 echo chr( $this->stack[$green] );
                 break;
-            case ( $alpha === 15 ):
-                $cmdString = 'Read Var';
+            case 15:
                 // Implement
                 break;
-            case ( $alpha === 16 ):
-                $cmdString = 'Read Value to Var';
+            case 16:
                 $this->stack[$green] = $blue;
                 break;
 
             // Conditional statements
-            case ( $alpha === 20 ):
-                $cmdString = 'EQ';
+            case 20:
                 if ( $blue !== $this->stack[$green] )
                 {
                     $fork = false;
                 }
                 break;
-            case ( $alpha === 21 ):
-                $cmdString = 'NE';
+            case 21:
                 if ( $blue === $this->stack[$green] )
                 {
                     $fork = false;
                 }
                 break;
-            case ( $alpha === 22 ):
-                $cmdString = 'LT';
+            case 22:
                 if ( $blue >= $this->stack[$green] )
                 {
                     $fork = false;
                 }
                 break;
-            case ( $alpha === 23 ):
-                $cmdString = 'GT';
+            case 23:
                 if ( $blue <= $this->stack[$green] )
                 {
                     $fork = false;
                 }
                 break;
-            case ( $alpha === 24 ):
-                $cmdString = 'LE';
+            case 24:
                 if ( $blue > $this->stack[$green] )
                 {
                     $fork = false;
                 }
                 break;
-            case ( $alpha === 25 ):
-                $cmdString = 'GE';
+            case 25:
                 if ( $blue < $this->stack[$green] )
                 {
                     $fork = false;
@@ -159,76 +178,69 @@ class kaforkl_Context
                 break;
 
             // Calculations
-            case ( $alpha === 30 ):
-                $cmdString = '<<';
+            case 30:
                 $this->stack[$green] = ( $this->stack[$green] << $blue ) % 256;
                 break;
-            case ( $alpha === 31 ):
-                $cmdString = '>>';
+            case 31:
                 $this->stack[$green] = ( $this->stack[$green] >> $blue ) % 256;
                 break;
-            case ( $alpha === 32 ):
-                $cmdString = 'AND';
+            case 32:
                 $this->stack[$green] = ( $this->stack[$green] & $blue ) % 256;
                 break;
-            case ( $alpha === 33 ):
-                $cmdString = 'OR';
+            case 33:
                 $this->stack[$green] = ( $this->stack[$green] | $blue ) % 256;
                 break;
-            case ( $alpha === 34 ):
-                $cmdString = 'XOR';
+            case 34:
                 $this->stack[$green] = ( $this->stack[$green] ^ $blue ) % 256;
                 break;
-            case ( $alpha === 35 ):
-                $cmdString = 'ADD';
+            case 35:
                 $this->stack[$green] = ( $this->stack[$green] + $blue ) % 256;
                 break;
-            case ( $alpha === 36 ):
-                $cmdString = 'SUB';
+            case 36:
                 $this->stack[$green] = ( $this->stack[$green] - $blue + 256 ) % 256;
                 break;
-            case ( $alpha === 37 ):
-                $cmdString = 'MUL';
+            case 37:
                 $this->stack[$green] = ( $this->stack[$green] * $blue ) % 256;
                 break;
 
             // Image manipulations
-            case ( $alpha === 40 ):
-                $cmdString = 'Red Value';
+            case 40:
                 $this->image->setRedValue( $this->position, $blue );
                 break;
-            case ( $alpha === 41 ):
-                $cmdString = 'Green Value';
+            case 41:
                 $this->image->setGreenValue( $this->position, $blue );
                 break;
-            case ( $alpha === 42 ):
-                $cmdString = 'Blue Value';
+            case 42:
                 $this->image->setBlueValue( $this->position, $blue );
                 break;
-            case ( $alpha === 43 ):
-                $cmdString = 'Alpha Value';
+            case 43:
                 $this->image->setAlphaValue( $this->position, $blue );
                 break;
-            case ( $alpha === 45 ):
-                $cmdString = 'Red Var';
+            case 45:
                 $this->image->setRedValue( $this->position, $this->stack[$green] );
                 break;
-            case ( $alpha === 46 ):
-                $cmdString = 'Green Var';
+            case 46:
                 $this->image->setGreenValue( $this->position, $this->stack[$green] );
                 break;
-            case ( $alpha === 47 ):
-                $cmdString = 'Blue Var';
+            case 47:
                 $this->image->setBlueValue( $this->position, $this->stack[$green] );
                 break;
-            case ( $alpha === 48 ):
-                $cmdString = 'Alpha Var';
+            case 48:
                 $this->image->setAlphaValue( $this->position, $this->stack[$green] );
                 break;
         }
 
         if ( DEBUG )
         {
+            if ( isset( self::$commandString[$alpha] ) )
+            {
+                $cmdString = self::$commandString[$alpha];
+            }
+            else
+            {
+                $cmdString = self::$commandString[0];
+            }
+
             printf( "   -> Executed: %s (Value: %d; Var: %d (%d))\n",
                 $cmdString,
                 $blue,
