@@ -84,13 +84,41 @@ class kaforkl_ImageModel extends kaforkl_Image
     }
 
     /**
-     * Fill up value array from image
+     * Write back to file
+     *
+     * We use imagemagick here, because libgd produces inaccurate results
      * 
      * @param string $fileName 
      */
-    protected function writeFile( $fileName )
+    public function writeFile( $fileName )
     {
-        // Not yet implemented
+        $width = $this->width;
+        $height = $this->height;
+        $data = $this->valueArray;
+
+        shell_exec( "convert -size {$width}x{$height} xc:transparent -type TrueColorMatte $fileName" );
+
+        // Default background to black
+        for ( $x = 0; $x < $width; ++$x )
+        {
+            $cmd = "convert $fileName";
+            for ( $y = 0; $y < $height; ++$y )
+            {
+                // Fix alpha value for imagick
+                $data[$x][$y][kaforkl_Image::ALPHA] = str_replace( ',', '.', 1 - ( $data[$x][$y][kaforkl_Image::ALPHA] / 127 ) );
+
+                if ( isset( $data[$x][$y] ) )
+                {
+                    $cmd .= " -fill \"rgba(" . implode( ',', $data[$x][$y] ) . ")\" -draw \"point {$x},{$y}\"";
+                }
+                else
+                {
+                    $cmd .= " -fill \"rgba(0,0,0,0)\" -draw \"point {$x},{$y}\"";
+                }
+            }
+            $cmd .= ' ' . $fileName;
+            shell_exec( $cmd );
+        }
     }
 
     /**

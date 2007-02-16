@@ -21,6 +21,10 @@ class kaforkl_Dispatch
     {
         switch ( strtolower( $method ) )
         {
+            case 'image_save':
+                kaforkl_IdeMain::$handler->writeFile( 'ide.out.png' );
+                break;
+
             case 'zoom_changed':
                 kaforkl_IdeMain::$handler->updateWidget();
                 break;
