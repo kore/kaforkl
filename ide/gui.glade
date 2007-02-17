@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.1.5 on Sat Feb 17 14:14:18 2007 by kore@localhost-->
+<!--Generated with glade3 3.1.5 on Sat Feb 17 14:19:44 2007 by kore@localhost-->
 <glade-interface>
   <widget class="GtkWindow" id="main">
     <property name="width_request">800</property>
@@ -611,7 +611,7 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkScrolledWindow" id="scrolledwindow2">
+                      <widget class="GtkScrolledWindow" id="output_scroll">
                         <property name="visible">True</property>
                         <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
                         <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>

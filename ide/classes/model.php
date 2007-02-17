@@ -197,6 +197,27 @@ class kaforkl_ImageModel extends kaforkl_Image
             }
         }
 
+        // Mark processors positions
+        if ( $zoom > 2 )
+        {
+            $color = imagecolorallocatealpha( $image, 252, 233, 79, 64 );
+
+            foreach ( $this->processors as $context )
+            {
+                $position = $context->getPosition();
+                $x = $position->getX();
+                $y = $position->getY();
+
+                imagerectangle(
+                    $image,
+                    $x * $zoom, $y * $zoom,
+                    $x * $zoom + $zoom - 1, $y * $zoom + $zoom - 1,
+                    $color
+                );
+                
+            }
+        }
+
         imagepng( $image, $tmpFile = dirname( __FILE__ ) . '/../data/tmp.png' );
 
         // Scale using pixbuf scaling
@@ -320,9 +341,6 @@ class kaforkl_ImageModel extends kaforkl_Image
                 $this->valueArray[$this->xSelected][$this->ySelected][kaforkl_Image::ALPHA] = $value;
                 break;
         }
-
-        // Only store on command
-        // $this->updateWidget();
     }
 
     /**
@@ -393,6 +411,7 @@ class kaforkl_ImageModel extends kaforkl_Image
         // Start processing
         $this->debug( "\nNext step:\n" );
 
+        ob_start();
         foreach ( $this->processors as $nr => $context )
         {
             // Test for max step count
@@ -413,6 +432,23 @@ class kaforkl_ImageModel extends kaforkl_Image
             // Processor fork or dies
             unset( $this->processors[$nr] );
         }
+
+        // Update output widget
+        $widget = kaforkl_IdeMain::$glade->get_widget( 'output' );
+        $buffer = $widget->get_buffer();
+
+        $buffer->place_cursor( $buffer->get_end_iter() );
+        $buffer->insert_at_cursor( (string) ob_get_clean() );
+
+        $widget->set_buffer( $buffer );
+
+        // Scroll down
+        $widget = kaforkl_IdeMain::$glade->get_widget( 'output_scroll' );
+        $adjustment = $widget->get_vadjustment();
+        $adjustment->set_value( $adjustment->upper );
+
+        // Update displayed image
+        $this->updateWidget();
 
         if ( !count( $this->processors ) )
         {
