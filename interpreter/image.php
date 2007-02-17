@@ -161,9 +161,7 @@ abstract class kaforkl_Image
     /**
      * Static function to collect debug messages
      * 
-     * @param mixed $msg 
-     * @static
-     * @access public
+     * @param string $msg 
      * @return void
      */
     public static function debug( $msg )
