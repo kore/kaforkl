@@ -242,7 +242,7 @@ class kaforkl_Context
             $blue,
             $green,
             // Silence notices from unitialized stack variables
-            $this->stack[$green]
+            @$this->stack[$green]
         ) );
 
         if ( $fork )
