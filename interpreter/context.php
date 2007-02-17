@@ -313,7 +313,7 @@ class kaforkl_Context
      */
     public function move( $direction, $stepSize = 1 )
     {
-        $this->position->move( $direction, $stepSize = 1 );
+        $this->position->move( $direction, $stepSize );
     }
 
     /**
