@@ -130,6 +130,9 @@ class kaforkl_Context
             case 11:
                 echo chr( $this->stack[$green] );
                 break;
+            case 12:
+                $this->stack[$blue] = $this->stack[$green];
+                break;
             case 15:
                 // Implement
                 break;
@@ -199,6 +202,9 @@ class kaforkl_Context
                 break;
             case 37:
                 $this->stack[$green] = ( $this->stack[$green] * $blue ) % 256;
+                break;
+            case 38:
+                $this->stack[$green] = $this->stack[$green] % $blue;
                 break;
 
             // Image manipulations

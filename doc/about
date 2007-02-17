@@ -42,6 +42,7 @@ The alpha value of a pixel defines a command:
 - IO operations
   - 10: Write value
   - 11: Write variable content
+  - 12: Copy variable to stack position
   - 15: Read to variable
   - 16: Read value into variable
 - Conditional statements
@@ -60,6 +61,7 @@ The alpha value of a pixel defines a command:
   - 35: Add value to variable
   - 36: Substract value from variable
   - 37: Multiply variable by value
+  - 38: Modulo variable by value
 - Image manipulations
   - 40: Write value to red channel
   - 41: Write value to green channel
