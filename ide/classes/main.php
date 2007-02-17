@@ -58,15 +58,12 @@ class kaforkl_IdeMain
         self::$glade = new GladeXML( dirname( __FILE__ ) . '/../gui.glade' );
         $window = self::$glade->get_widget( 'main' );
 
-        /**
-         * We do not yet have an icon
         $pixbufs = array();
         foreach ( $this->iconList as $iconFile )
         {
             $pixbufs[] = GdkPixbuf::new_from_file( dirname( __FILE__ ) . '/../' . $iconFile );
         }
         $window->set_icon_list( $pixbufs );
-        */
 
         $this->connectAll();
         $this->parseArgv( $argv );
