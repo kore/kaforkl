@@ -429,6 +429,27 @@ class kaforkl_ImageModel extends kaforkl_Image
     }
 
     /**
+     * Get loop status
+     * 
+     * @return bool;
+     */
+    public function getLoop()
+    {
+        return $this->loop;
+    }
+
+    /**
+     * Set loop status
+     * 
+     * @param bool $loop 
+     * @return void
+     */
+    public function setLoop( $loop )
+    {
+        $this->loop = (bool) $loop;
+    }
+
+    /**
      * Main run method
      *
      * Starts processing
@@ -454,48 +475,56 @@ class kaforkl_ImageModel extends kaforkl_Image
         // Start processing
         $this->debug( "\nNext step:\n" );
 
-        ob_start();
-        foreach ( $this->processors as $nr => $context )
-        {
-            // Test for max step count
-            if ( ( $this->maxStepCount !== false ) && ( $nr >= $this->maxStepCount ) )
+        do {
+            ob_start();
+            foreach ( $this->processors as $nr => $context )
             {
-                break 2;
+                // Test for max step count
+                if ( ( $this->maxStepCount !== false ) && ( $nr >= $this->maxStepCount ) )
+                {
+                    break 2;
+                }
+
+                $this->debug( "Running %d\n", $nr );
+
+                // Process current processor
+                $position = $context->getPosition();
+                call_user_func_array( 
+                    array( $context, 'process' ),
+                    $this->valueArray[$position->getX()][$position->getY()]
+                );
+
+                // Processor fork or dies
+                unset( $this->processors[$nr] );
             }
 
-            $this->debug( "Running %d\n", $nr );
+            // Update output widget
+            $widget = kaforkl_IdeMain::$glade->get_widget( 'output' );
+            $buffer = $widget->get_buffer();
 
-            // Process current processor
-            $position = $context->getPosition();
-            call_user_func_array( 
-                array( $context, 'process' ),
-                $this->valueArray[$position->getX()][$position->getY()]
-            );
+            $buffer->place_cursor( $buffer->get_end_iter() );
+            $buffer->insert_at_cursor( (string) ob_get_clean() );
 
-            // Processor fork or dies
-            unset( $this->processors[$nr] );
-        }
+            $widget->set_buffer( $buffer );
 
-        // Update output widget
-        $widget = kaforkl_IdeMain::$glade->get_widget( 'output' );
-        $buffer = $widget->get_buffer();
+            // Scroll down
+            $widget = kaforkl_IdeMain::$glade->get_widget( 'output_scroll' );
+            $adjustment = $widget->get_vadjustment();
+            $adjustment->set_value( $adjustment->upper );
 
-        $buffer->place_cursor( $buffer->get_end_iter() );
-        $buffer->insert_at_cursor( (string) ob_get_clean() );
+            // Update displayed image
+            $this->updateWidget();
 
-        $widget->set_buffer( $buffer );
+            if ( !count( $this->processors ) )
+            {
+                $this->debug( "Program terminated.\n" );
+                break;
+            }
 
-        // Scroll down
-        $widget = kaforkl_IdeMain::$glade->get_widget( 'output_scroll' );
-        $adjustment = $widget->get_vadjustment();
-        $adjustment->set_value( $adjustment->upper );
-
-        // Update displayed image
-        $this->updateWidget();
-
-        if ( !count( $this->processors ) )
-        {
-            $this->debug( "Program terminated.\n" );
-        }
+            while ( Gtk::events_pending() )
+            {
+                Gtk::main_iteration( );
+            }
+        } while( $this->loop );
     }
 }

@@ -29,7 +29,15 @@ class kaforkl_Dispatch
                 kaforkl_IdeMain::$handler->updateWidget();
                 break;
 
+            case 'exec_run':
+                kaforkl_IdeMain::$handler->setLoop( true );
+                kaforkl_IdeMain::$handler->run();
+                break;
+            case 'exec_stop':
+                kaforkl_IdeMain::$handler->setLoop( false );
+                break;
             case 'exec_next':
+                kaforkl_IdeMain::$handler->setLoop( false );
                 kaforkl_IdeMain::$handler->run();
                 break;
             case 'exec_reset':

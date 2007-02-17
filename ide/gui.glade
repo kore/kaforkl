@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.1.5 on Sat Feb 17 23:42:58 2007 by kore@localhost-->
+<!--Generated with glade3 3.1.5 on Sat Feb 17 23:57:16 2007 by kore@localhost-->
 <glade-interface>
   <widget class="GtkWindow" id="main">
     <property name="width_request">800</property>
@@ -127,6 +127,17 @@
                                 <property name="label">Run</property>
                                 <property name="stock_id">gtk-media-play</property>
                                 <signal name="clicked" handler="exec_run"/>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkToolButton" id="toolbutton1">
+                                <property name="visible">True</property>
+                                <property name="label">Stop</property>
+                                <property name="stock_id">gtk-media-stop</property>
+                                <signal name="clicked" handler="exec_stop"/>
                               </widget>
                               <packing>
                                 <property name="expand">False</property>
