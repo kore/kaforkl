@@ -139,6 +139,11 @@ class kaforkl_ImageModel extends kaforkl_Image
         }
     }
 
+    /**
+     * Updates GUI widget displaying the program (/image)
+     * 
+     * @return void
+     */
     public function updateWidget()
     {
         // Recreate image to display with gd
