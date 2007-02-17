@@ -287,6 +287,17 @@ class kaforkl_ImageModel extends kaforkl_Image
                 break;
         }
 
+        // Only store on command
+        // $this->updateWidget();
+    }
+
+    /**
+     * Update displayed value from model
+     * 
+     * @return void
+     */
+    public function storePixel()
+    {
         $this->updateWidget();
     }
 

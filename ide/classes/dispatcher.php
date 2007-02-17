@@ -32,6 +32,9 @@ class kaforkl_Dispatch
             case 'pixel_select':
                 call_user_func_array( array( kaforkl_IdeMain::$handler, 'selectPixel' ), $params );
                 break;
+            case 'pixel_store':
+                call_user_func_array( array( kaforkl_IdeMain::$handler, 'storePixel' ), $params );
+                break;
 
             case 'blue_update':
                 call_user_func_array( array( kaforkl_IdeMain::$handler, 'updatePixel' ), array( kaforkl_Image::BLUE ) );
