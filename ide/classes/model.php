@@ -198,7 +198,7 @@ class kaforkl_ImageModel extends kaforkl_Image
         }
 
         // Mark processors positions
-        if ( $zoom > 2 )
+        if ( $zoom > 2 && is_array( $this->processors ) )
         {
             $color = imagecolorallocatealpha( $image, 252, 233, 79, 64 );
 
