@@ -62,6 +62,7 @@ The alpha value of a pixel defines a command:
   - 36: Substract value from variable
   - 37: Multiply variable by value
   - 38: Modulo variable by value
+  - 38: Divide variable by value
 - Image manipulations
   - 40: Write value to red channel
   - 41: Write value to green channel

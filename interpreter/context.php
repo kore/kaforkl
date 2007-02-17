@@ -55,6 +55,7 @@ class kaforkl_Context
         36 => 'SUB',
         37 => 'MUL',
         38 => 'MOD',
+        39 => 'DIV',
         40 => 'Red Value',
         41 => 'Green Value',
         42 => 'Blue Value',
@@ -207,6 +208,9 @@ class kaforkl_Context
                 break;
             case 38:
                 $this->stack[$green] = $this->stack[$green] % $blue;
+                break;
+            case 39:
+                $this->stack[$green] = (int) ( $this->stack[$green] / $blue );
                 break;
 
             // Image manipulations
