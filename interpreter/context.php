@@ -90,6 +90,16 @@ class kaforkl_Context
         return $this->position;
     }
 
+    /**
+     * Get content from stack
+     *
+     * Check if stack is initialized, return 0 otherwise. Optional second 
+     * parameter to not echo debug output.
+     * 
+     * @param int $i 
+     * @param bool $silence 
+     * @return int
+     */
     protected function getFromStack( $i, $silence = false )
     {
         if ( !isset( $this->stack[$i] ) )
@@ -120,7 +130,7 @@ class kaforkl_Context
             $alpha,
             $blue,
             $green,
-            $this->getFromStack( $green )
+            $this->getFromStack( $green, true )
         ) );
 
         // Update context accordingly to parameters
@@ -268,7 +278,7 @@ class kaforkl_Context
             $blue,
             $green,
             // Silence notices from unitialized stack variables
-            $this->getFromStack( $green )
+            $this->getFromStack( $green, true )
         ) );
 
         if ( $fork )
