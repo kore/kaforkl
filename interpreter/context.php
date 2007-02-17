@@ -106,7 +106,7 @@ class kaforkl_Context
         {
             if ( !$silence )
             {
-                $this->image->debug( "! => Stack position '$i' not initialised." );
+                $this->image->debug( "! => Stack position '$i' not initialised.\n" );
             }
 
             return 0;
