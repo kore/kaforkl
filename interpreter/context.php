@@ -91,6 +91,16 @@ class kaforkl_Context
     }
 
     /**
+     * Return copy of stack for introspection
+     * 
+     * @return array
+     */
+    public function getStack()
+    {
+        return $this->stack;
+    }
+
+    /**
      * Get content from stack
      *
      * Check if stack is initialized, return 0 otherwise. Optional second 

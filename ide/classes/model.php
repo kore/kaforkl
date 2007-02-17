@@ -236,6 +236,7 @@ class kaforkl_ImageModel extends kaforkl_Image
      */
     public function selectPixel( $widget, $event )
     {
+        // Get clicked pixel
         $viewport = kaforkl_IdeMain::$glade->get_widget( 'drawing_viewport' );
         $widgetSize = $viewport->get_allocation();
 
@@ -249,6 +250,7 @@ class kaforkl_ImageModel extends kaforkl_Image
         $this->xSelected = floor( ( $event->x - $xOffset ) / $zoom );
         $this->ySelected = floor( ( $event->y - $yOffset ) / $zoom );
 
+        // Update widgets with pixel information
         if ( isset( $this->valueArray[$this->xSelected] ) 
           && isset( $this->valueArray[$this->xSelected][$this->ySelected] ) )
         {
@@ -269,6 +271,47 @@ class kaforkl_ImageModel extends kaforkl_Image
                 $checkbox = kaforkl_IdeMain::$glade->get_widget( self::$redCheckBoxes[$i] );
                 $checkbox->set_active( $values[kaforkl_Image::RED] & $i );
             }
+        }
+
+        // Check for processor stack introspection
+        $introspect = false;
+        foreach ( $this->processors as $nr => $context )
+        {
+            $position = $context->getPosition();
+
+            if ( ( $position->getX() == $this->xSelected ) &&
+                 ( $position->getY() == $this->ySelected ) )
+            {
+                $introspect = $nr;
+                break;
+            }
+        }
+
+        // Update tree widget if one processor was found
+        if ( $introspect !== false )
+        {
+            $widget = kaforkl_IdeMain::$glade->get_widget( 'stack_view' );
+            $model = new GtkListStore( Gtk::TYPE_LONG, Gtk::TYPE_LONG );
+
+            // Add column headers
+            if ( count( $widget->get_columns() ) == 0 )
+            {
+                $widget->append_column(
+                    new GtkTreeViewColumn( 'Variable', new GtkCellRendererText(), 'text', 0 )
+                );
+                $widget->append_column(
+                    new GtkTreeViewColumn( 'Content', new GtkCellRendererText(), 'text', 1 )
+                );
+            }
+
+            // Add data
+            $stack = $this->processors[$introspect]->getStack();
+            ksort( $stack );
+            foreach ( $stack as $variable => $content )
+            {
+                $model->append( array( $variable, $content ) );
+            }
+            $widget->set_model( $model );
         }
 
         $this->updateWidget();

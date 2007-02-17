@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.1.5 on Sat Feb 17 18:04:23 2007 by kore@localhost-->
+<!--Generated with glade3 3.1.5 on Sat Feb 17 23:42:58 2007 by kore@localhost-->
 <glade-interface>
   <widget class="GtkWindow" id="main">
     <property name="width_request">800</property>
@@ -102,8 +102,9 @@
                 <property name="position">150</property>
                 <property name="position_set">True</property>
                 <child>
-                  <widget class="GtkTreeView" id="tree_vars1">
+                  <widget class="GtkTreeView" id="stack_view">
                     <property name="visible">True</property>
+                    <property name="enable_search">False</property>
                   </widget>
                   <packing>
                     <property name="resize">False</property>
