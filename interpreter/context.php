@@ -98,15 +98,13 @@ class kaforkl_Context
      */
     public function process( $red, $green, $blue, $alpha )
     {
-        if ( DEBUG )
-        {
-            printf( " -> Command: %d (Value: %d; Var: %d (%d))\n",
-                $alpha,
-                $blue,
-                $green,
-                $this->stack[$green]
-            );
-        }
+        kaforkl_Image::debug( sprintf( " -> Command: %d (Value: %d; Var: %d (%d))\n",
+            $alpha,
+            $blue,
+            $green,
+            // Silence notices from unitialized stack variables
+            @$this->stack[$green]
+        ) );
 
         // Update context accordingly to parameters
         $fork = true;
@@ -230,30 +228,28 @@ class kaforkl_Context
                 break;
         }
 
-        if ( DEBUG )
+        if ( isset( self::$commandString[$alpha] ) )
         {
-            if ( isset( self::$commandString[$alpha] ) )
-            {
-                $cmdString = self::$commandString[$alpha];
-            }
-            else
-            {
-                $cmdString = self::$commandString[0];
-            }
+            $cmdString = self::$commandString[$alpha];
+        }
+        else
+        {
+            $cmdString = self::$commandString[0];
+        }
 
-            printf( "   -> Executed: %s (Value: %d; Var: %d (%d))\n",
-                $cmdString,
-                $blue,
-                $green,
-                $this->stack[$green]
-            );
+        kaforkl_Image::debug( sprintf( "   -> Executed: %s (Value: %d; Var: %d (%d))\n",
+            $cmdString,
+            $blue,
+            $green,
+            // Silence notices from unitialized stack variables
+            $this->stack[$green]
+        ) );
 
-            if ( $fork )
-            {
-                printf( "   -> Move: %d\n",
-                    $red
-                );
-            }
+        if ( $fork )
+        {
+            kaforkl_Image::debug( sprintf( "   -> Move: %d\n",
+                $red
+            ) );
         }
 
         // If not skipped by conditions fork processor

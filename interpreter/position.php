@@ -125,17 +125,14 @@ class kaforkl_Position
                 break;
         }
 
-        if ( DEBUG )
-        {
-            printf( " -> Move %s (%d) (Step size: %d) => %d, %d (%d, %d)\n",
-                $directionString,
-                $direction,
-                $stepSize,
-                $this->x,
-                $this->y,
-                $this->width,
-                $this->height
-            );
-        }
+        kaforkl_Image::debug( sprintf( " -> Move %s (%d) (Step size: %d) => %d, %d (%d, %d)\n",
+            $directionString,
+            $direction,
+            $stepSize,
+            $this->x,
+            $this->y,
+            $this->width,
+            $this->height
+        ) );
     }
 }

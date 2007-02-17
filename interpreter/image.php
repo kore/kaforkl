@@ -159,6 +159,22 @@ abstract class kaforkl_Image
     }
 
     /**
+     * Static function to collect debug messages
+     * 
+     * @param mixed $msg 
+     * @static
+     * @access public
+     * @return void
+     */
+    public static function debug( $msg )
+    {
+        if ( DEBUG )
+        {
+            echo $msg;
+        }
+    }
+
+    /**
      * Main run method
      *
      * Starts processing
@@ -180,10 +196,7 @@ abstract class kaforkl_Image
 
         // Start processing
         do {
-            if ( DEBUG )
-            {
-                echo "\nNext step:\n";
-            }
+            self::debug( "\nNext step:\n" );
 
             foreach ( $this->processors as $nr => $context )
             {
@@ -193,10 +206,7 @@ abstract class kaforkl_Image
                     break 2;
                 }
 
-                if ( DEBUG )
-                {
-                    printf( "Running %d\n", $nr );
-                }
+                self::debug( "Running %d\n", $nr );
 
                 // Process current processor
                 $position = $context->getPosition();
