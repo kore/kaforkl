@@ -210,7 +210,7 @@ class kaforkl_Context
                 $this->stack[$green] = $this->stack[$green] % $blue;
                 break;
             case 39:
-                $this->stack[$green] = (int) ( $this->stack[$green] / $blue );
+                $this->stack[$green] = (int) floor( $this->stack[$green] / $blue );
                 break;
 
             // Image manipulations
