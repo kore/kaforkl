@@ -146,9 +146,13 @@ class kaforkl_ImageModel extends kaforkl_Image
      */
     public function updateWidget()
     {
+        // Get zoom factor
+        $zoom = $this->getCurrentZoomFactor();
+
         // Recreate image to display with gd
-        $image = imagecreatetruecolor( $this->width, $this->height );
+        $image = imagecreatetruecolor( $this->width * $zoom, $this->height * $zoom );
         imagesavealpha( $image, true );
+        imagealphablending( $image, true );
 
         for ( $x = 0; $x < $this->width; ++$x )
         {
@@ -162,18 +166,41 @@ class kaforkl_ImageModel extends kaforkl_Image
                     $this->valueArray[$x][$y][kaforkl_Image::ALPHA]
                 );
 
-                imagesetpixel( $image, $x, $y, $color );
+                if ( $zoom == 1 )
+                {
+                    imagesetpixel( $image, $x, $y, $color );
+                }
+                else
+                {
+                    imagefilledrectangle(
+                        $image,
+                        $x * $zoom, $y * $zoom,
+                        $x * $zoom + $zoom - 1, $y * $zoom + $zoom - 1,
+                        $color
+                    );
+
+                    if ( $zoom > 2 && 
+                         ( $this->xSelected !== null ) &&
+                         ( $x == $this->xSelected ) &&
+                         ( $y == $this->ySelected ) )
+                    {
+                        // Mark selected
+                        $color = imagecolorallocatealpha( $image, 204, 0, 0, 64 );
+                        imagerectangle(
+                            $image,
+                            $x * $zoom, $y * $zoom,
+                            $x * $zoom + $zoom - 1, $y * $zoom + $zoom - 1,
+                            $color
+                        );
+                    }
+                }
             }
         }
 
         imagepng( $image, $tmpFile = dirname( __FILE__ ) . '/../data/tmp.png' );
 
-        // Get zoom factor
-        $zoom = $this->getCurrentZoomFactor();
-
         // Scale using pixbuf scaling
         $pixbuf = GDKPixbuf::new_from_file( $tmpFile );
-        $pixbuf = $pixbuf->scale_simple( $this->width * $zoom, $this->height * $zoom, Gdk::INTERP_TILES );
 
         $widget = kaforkl_IdeMain::$glade->get_widget( 'drawingarea' );
         $widget->set_from_pixbuf( $pixbuf );
@@ -222,6 +249,8 @@ class kaforkl_ImageModel extends kaforkl_Image
                 $checkbox->set_active( $values[kaforkl_Image::RED] & $i );
             }
         }
+
+        $this->updateWidget();
     }
 
     /**
