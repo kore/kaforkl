@@ -29,6 +29,13 @@ class kaforkl_Dispatch
                 kaforkl_IdeMain::$handler->updateWidget();
                 break;
 
+            case 'exec_next':
+                kaforkl_IdeMain::$handler->run();
+                break;
+            case 'exec_reset':
+                kaforkl_IdeMain::$handler->resetProcessors();
+                break;
+
             case 'pixel_select':
                 call_user_func_array( array( kaforkl_IdeMain::$handler, 'selectPixel' ), $params );
                 break;

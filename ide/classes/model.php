@@ -336,55 +336,87 @@ class kaforkl_ImageModel extends kaforkl_Image
     }
 
     /**
+     * Static function to collect debug messages
+     * 
+     * @param string $msg 
+     * @return void
+     */
+    public function debug( $msg )
+    {
+        $widget = kaforkl_IdeMain::$glade->get_widget( 'debug_output' );
+        $buffer = $widget->get_buffer();
+
+        $buffer->place_cursor( $buffer->get_end_iter() );
+        $buffer->insert_at_cursor( $msg );
+
+        $widget->set_buffer( $buffer );
+
+        // Scroll down
+        $widget = kaforkl_IdeMain::$glade->get_widget( 'debug_scroll' );
+        $adjustment = $widget->get_vadjustment();
+        $adjustment->set_value( $adjustment->upper );
+    }
+
+    /**
+     * Reset execution environment
+     * 
+     * @return void
+     */
+    public function resetProcessors()
+    {
+        $this->processors = null;
+    }
+
+    /**
      * Main run method
      *
      * Starts processing
      */
-    public function run( $x = 0, $y = 0 )
+    public function run()
     {
         // Create initial processor
-        $this->addProcessor(
-            new kaforkl_Context(
-                $this,
-                new kaforkl_Position( 
-                    $this->width,
-                    $this->height,
-                    $x,
-                    $y
+        if ( $this->processors === null )
+        {
+            $this->addProcessor(
+                new kaforkl_Context(
+                    $this,
+                    new kaforkl_Position( 
+                        $this->width,
+                        $this->height,
+                        $this->xSelected,
+                        $this->ySelected
+                    )
                 )
-            )
-        );
+            );
+        }
 
         // Start processing
-        do {
-            if ( DEBUG )
+        $this->debug( "\nNext step:\n" );
+
+        foreach ( $this->processors as $nr => $context )
+        {
+            // Test for max step count
+            if ( ( $this->maxStepCount !== false ) && ( $nr >= $this->maxStepCount ) )
             {
-                echo "\nNext step:\n";
+                break 2;
             }
 
-            foreach ( $this->processors as $nr => $context )
-            {
-                // Test for max step count
-                if ( ( $this->maxStepCount !== false ) && ( $nr >= $this->maxStepCount ) )
-                {
-                    break 2;
-                }
+            $this->debug( "Running %d\n", $nr );
 
-                if ( DEBUG )
-                {
-                    printf( "Running %d\n", $nr );
-                }
+            // Process current processor
+            $position = $context->getPosition();
+            call_user_func_array( 
+                array( $context, 'process' ),
+                $this->valueArray[$position->getX()][$position->getY()]
+            );
 
-                // Process current processor
-                $position = $context->getPosition();
-                call_user_func_array( 
-                    array( $context, 'process' ),
-                    $this->valueArray[$position->getX()][$position->getY()]
-                );
+            // Processor fork or dies
+            unset( $this->processors[$nr] );
+        }
 
-                // Processor fork or dies
-                unset( $this->processors[$nr] );
-            }
-        } while ( count( $this->processors ) );
+        if ( !count( $this->processors ) )
+        {
+            $this->debug( "Program terminated.\n" );
+        }
     }
 }
