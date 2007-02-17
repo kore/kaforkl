@@ -164,7 +164,7 @@ abstract class kaforkl_Image
      * @param string $msg 
      * @return void
      */
-    public static function debug( $msg )
+    public function debug( $msg )
     {
         if ( DEBUG )
         {
