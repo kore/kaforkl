@@ -194,7 +194,7 @@ abstract class kaforkl_Image
 
         // Start processing
         do {
-            self::debug( "\nNext step:\n" );
+            $this->debug( "\nNext step:\n" );
 
             foreach ( $this->processors as $nr => $context )
             {
@@ -204,7 +204,7 @@ abstract class kaforkl_Image
                     break 2;
                 }
 
-                self::debug( "Running %d\n", $nr );
+                $this->debug( "Running %d\n", $nr );
 
                 // Process current processor
                 $position = $context->getPosition();
@@ -217,5 +217,7 @@ abstract class kaforkl_Image
                 unset( $this->processors[$nr] );
             }
         } while ( count( $this->processors ) );
+
+        $this->debug( "Program terminated.\n" );
     }
 }

@@ -124,15 +124,5 @@ class kaforkl_Position
                 $directionString = 'NW';
                 break;
         }
-
-        kaforkl_Image::debug( sprintf( " -> Move %s (%d) (Step size: %d) => %d, %d (%d, %d)\n",
-            $directionString,
-            $direction,
-            $stepSize,
-            $this->x,
-            $this->y,
-            $this->width,
-            $this->height
-        ) );
     }
 }

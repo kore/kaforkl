@@ -98,7 +98,7 @@ class kaforkl_Context
      */
     public function process( $red, $green, $blue, $alpha )
     {
-        kaforkl_Image::debug( sprintf( " -> Command: %d (Value: %d; Var: %d (%d))\n",
+        $this->image->debug( sprintf( " -> Command: %d (Value: %d; Var: %d (%d))\n",
             $alpha,
             $blue,
             $green,
@@ -237,7 +237,7 @@ class kaforkl_Context
             $cmdString = self::$commandString[0];
         }
 
-        kaforkl_Image::debug( sprintf( "   -> Executed: %s (Value: %d; Var: %d (%d))\n",
+        $this->image->debug( sprintf( "   -> Executed: %s (Value: %d; Var: %d (%d))\n",
             $cmdString,
             $blue,
             $green,
@@ -247,7 +247,7 @@ class kaforkl_Context
 
         if ( $fork )
         {
-            kaforkl_Image::debug( sprintf( "   -> Move: %d\n",
+            $this->image->debug( sprintf( "   -> Move: %d\n",
                 $red
             ) );
         }
