@@ -90,6 +90,21 @@ class kaforkl_Context
         return $this->position;
     }
 
+    protected function getFromStack( $i, $silence = false )
+    {
+        if ( !isset( $this->stack[$i] ) )
+        {
+            if ( !$silence )
+            {
+                $this->image->debug( "! => Stack position '$i' not initialised." );
+            }
+
+            return 0;
+        }
+
+        return $this->stack[$i];
+    }
+
     /**
      * Process one command from image
      * 
@@ -105,8 +120,7 @@ class kaforkl_Context
             $alpha,
             $blue,
             $green,
-            // Silence notices from unitialized stack variables
-            @$this->stack[$green]
+            $this->getFromStack( $green )
         ) );
 
         // Update context accordingly to parameters
@@ -120,7 +134,7 @@ class kaforkl_Context
                 // Just walk
                 break;
             case 1:
-                $stepSize = $this->stack[$green];
+                $stepSize = $this->getFromStack( $green );
                 break;
             case 2:
                 $stepSize = $blue;
@@ -131,10 +145,10 @@ class kaforkl_Context
                 echo chr( $blue );
                 break;
             case 11:
-                echo chr( $this->stack[$green] );
+                echo chr( $this->getFromStack( $green ) );
                 break;
             case 12:
-                $this->stack[$blue] = $this->stack[$green];
+                $this->stack[$blue] = $this->getFromStack( $green );
                 break;
             case 15:
                 // Implement
@@ -145,37 +159,37 @@ class kaforkl_Context
 
             // Conditional statements
             case 20:
-                if ( $blue !== $this->stack[$green] )
+                if ( $blue !== $this->getFromStack( $green ) )
                 {
                     $fork = false;
                 }
                 break;
             case 21:
-                if ( $blue === $this->stack[$green] )
+                if ( $blue === $this->getFromStack( $green ) )
                 {
                     $fork = false;
                 }
                 break;
             case 22:
-                if ( $blue >= $this->stack[$green] )
+                if ( $blue >= $this->getFromStack( $green ) )
                 {
                     $fork = false;
                 }
                 break;
             case 23:
-                if ( $blue <= $this->stack[$green] )
+                if ( $blue <= $this->getFromStack( $green ) )
                 {
                     $fork = false;
                 }
                 break;
             case 24:
-                if ( $blue > $this->stack[$green] )
+                if ( $blue > $this->getFromStack( $green ) )
                 {
                     $fork = false;
                 }
                 break;
             case 25:
-                if ( $blue < $this->stack[$green] )
+                if ( $blue < $this->getFromStack( $green ) )
                 {
                     $fork = false;
                 }
@@ -227,16 +241,16 @@ class kaforkl_Context
                 $this->image->setAlphaValue( $this->position, $blue );
                 break;
             case 45:
-                $this->image->setRedValue( $this->position, $this->stack[$green] );
+                $this->image->setRedValue( $this->position, $this->getFromStack( $green ) );
                 break;
             case 46:
-                $this->image->setGreenValue( $this->position, $this->stack[$green] );
+                $this->image->setGreenValue( $this->position, $this->getFromStack( $green ) );
                 break;
             case 47:
-                $this->image->setBlueValue( $this->position, $this->stack[$green] );
+                $this->image->setBlueValue( $this->position, $this->getFromStack( $green ) );
                 break;
             case 48:
-                $this->image->setAlphaValue( $this->position, $this->stack[$green] );
+                $this->image->setAlphaValue( $this->position, $this->getFromStack( $green ) );
                 break;
         }
 
@@ -254,7 +268,7 @@ class kaforkl_Context
             $blue,
             $green,
             // Silence notices from unitialized stack variables
-            @$this->stack[$green]
+            $this->getFromStack( $green )
         ) );
 
         if ( $fork )
