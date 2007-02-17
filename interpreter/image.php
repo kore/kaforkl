@@ -74,7 +74,7 @@ abstract class kaforkl_Image
      */
     public function __construct( $fileName )
     {
-        $this->processors = array();
+        $this->processors = null;
         $this->valueArray = array();
         $this->readFile( $fileName );
     }
