@@ -275,15 +275,18 @@ class kaforkl_ImageModel extends kaforkl_Image
 
         // Check for processor stack introspection
         $introspect = false;
-        foreach ( $this->processors as $nr => $context )
+        if ( is_array( $this->processors ) )
         {
-            $position = $context->getPosition();
-
-            if ( ( $position->getX() == $this->xSelected ) &&
-                 ( $position->getY() == $this->ySelected ) )
+            foreach ( $this->processors as $nr => $context )
             {
-                $introspect = $nr;
-                break;
+                $position = $context->getPosition();
+
+                if ( ( $position->getX() == $this->xSelected ) &&
+                     ( $position->getY() == $this->ySelected ) )
+                {
+                    $introspect = $nr;
+                    break;
+                }
             }
         }
 
