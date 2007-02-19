@@ -44,6 +44,10 @@ class kaforkl_Dispatch
                 kaforkl_IdeMain::$handler->resetProcessors();
                 break;
 
+            case 'key_command':
+                call_user_func_array( array( 'kaforkl_IdeMain', 'keyPressEvent' ), $params );
+                break;
+
             case 'pixel_select':
                 call_user_func_array( array( kaforkl_IdeMain::$handler, 'selectPixel' ), $params );
                 break;

@@ -228,28 +228,12 @@ class kaforkl_ImageModel extends kaforkl_Image
     }
 
     /**
-     * Evaluate click and select the clicked pixel and display its values
+     * Update all widgets from selected pixel
      * 
-     * @param GtkWidget $widget 
-     * @param GtkEvent $event 
      * @return void
      */
-    public function selectPixel( $widget, $event )
+    protected function updateFromSelection()
     {
-        // Get clicked pixel
-        $viewport = kaforkl_IdeMain::$glade->get_widget( 'drawing_viewport' );
-        $widgetSize = $viewport->get_allocation();
-
-        $zoom = $this->getCurrentZoomFactor();
-        $width = $this->width * $zoom;
-        $height = $this->height * $zoom;
-
-        $xOffset = max( 0, ( $widgetSize->width - $width ) / 2 ) - $widget->get_hadjustment()->value;
-        $yOffset = max( 0, ( $widgetSize->height - $height ) / 2 ) - $widget->get_vadjustment()->value;
-
-        $this->xSelected = floor( ( $event->x - $xOffset ) / $zoom );
-        $this->ySelected = floor( ( $event->y - $yOffset ) / $zoom );
-
         // Update widgets with pixel information
         if ( isset( $this->valueArray[$this->xSelected] ) 
           && isset( $this->valueArray[$this->xSelected][$this->ySelected] ) )
@@ -321,7 +305,73 @@ class kaforkl_ImageModel extends kaforkl_Image
     }
 
     /**
-     * Pixel information were update - update model and GUI
+     * Move selected pixel by value
+     * 
+     * @param int $xDiff 
+     * @param int $yDiff 
+     * @return void
+     */
+    public function move( $xDiff, $yDiff )
+    {
+        $this->xSelected += $xDiff;
+        $this->ySelected += $yDiff;
+
+        $this->updateFromSelection();
+    }
+
+    /**
+     * Evaluate click and select the clicked pixel and display its values
+     * 
+     * @param GtkWidget $widget 
+     * @param GtkEvent $event 
+     * @return void
+     */
+    public function selectPixel( $widget, $event )
+    {
+        // Get clicked pixel
+        $viewport = kaforkl_IdeMain::$glade->get_widget( 'drawing_viewport' );
+        $widgetSize = $viewport->get_allocation();
+
+        $zoom = $this->getCurrentZoomFactor();
+        $width = $this->width * $zoom;
+        $height = $this->height * $zoom;
+
+        $xOffset = max( 0, ( $widgetSize->width - $width ) / 2 ) - $widget->get_hadjustment()->value;
+        $yOffset = max( 0, ( $widgetSize->height - $height ) / 2 ) - $widget->get_vadjustment()->value;
+
+        $this->xSelected = floor( ( $event->x - $xOffset ) / $zoom );
+        $this->ySelected = floor( ( $event->y - $yOffset ) / $zoom );
+
+        $this->updateFromSelection();
+    }
+
+    /**
+     * Change color value for selected pixel
+     * 
+     * @param mixed $color 
+     * @param mixed $value 
+     * @access public
+     * @return void
+     */
+    public function changeValue( $color, $value )
+    {
+        switch ( $color )
+        {
+            case kaforkl_Image::RED:
+                $this->valueArray[$this->xSelected][$this->ySelected][kaforkl_Image::RED] ^= $value;
+
+                $checkbox = kaforkl_IdeMain::$glade->get_widget( self::$redCheckBoxes[$value] );
+                $checkbox->set_active(
+                    $this->valueArray[$this->xSelected][$this->ySelected][kaforkl_Image::RED] & $value
+                );
+                break;
+            // Others need not to be implemented for now
+        }
+
+    }
+
+    /**
+     * Pixel information were updated - update model and GUI
      * 
      * @param int $color 
      * @param int $direction 

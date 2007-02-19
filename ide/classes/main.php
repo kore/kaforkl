@@ -114,4 +114,53 @@ class kaforkl_IdeMain
         $dispatcher = new kaforkl_Dispatch();
         self::$glade->signal_autoconnect_instance( $dispatcher );
     }
+
+    public static function keyPressEvent( $widget, $event )
+    {
+        switch ( $event->keyval )
+        {
+            case 65361: // Left
+                self::$handler->move( -1, 0 );
+                break;
+            case 65364: // Down
+                self::$handler->move( 0, 1 );
+                break;
+            case 65363: // Right
+                self::$handler->move( 1, 0 );
+                break;
+            case 65362: // Top
+                self::$handler->move( 0, -1 );
+                break;
+
+            case 65436: // Num 1
+                self::$handler->changeValue( kaforkl_Image::RED, 32 );
+                break;
+            case 65433: // Num 2
+                self::$handler->changeValue( kaforkl_Image::RED, 16 );
+                break;
+            case 65435: // Num 3
+                self::$handler->changeValue( kaforkl_Image::RED, 8 );
+                break;
+            case 65430: // Num 4
+                self::$handler->changeValue( kaforkl_Image::RED, 64 );
+                break;
+            case 65437: // Num 5
+                break;
+            case 65432: // Num 6
+                self::$handler->changeValue( kaforkl_Image::RED, 4 );
+                break;
+            case 65429: // Num 7
+                self::$handler->changeValue( kaforkl_Image::RED, 128 );
+                break;
+            case 65431: // Num 8
+                self::$handler->changeValue( kaforkl_Image::RED, 1 );
+                break;
+            case 65434: // Num 9
+                self::$handler->changeValue( kaforkl_Image::RED, 2 );
+                break;
+
+            default:
+//                echo "Unhandled key pressed: ", $event->keyval, "\n";
+        }
+    }
 }
