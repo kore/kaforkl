@@ -114,15 +114,15 @@ The interpretor
 
 You can call the interpretor on command line using::
 
-	kaforkl image
+	bin/kaforkl image
 
 The default stating point will be the top left coordinate 0,0, but you may
 specify other starting points using the parameter -s::
 
-	kaforkl -s 12,45 image
+	bin/kaforkl -s 12,45 image
 
 You may specify an offset which will be removed from all input values. This 
 will not reduce the number of available variables::
 
-	kaforkl -s 12,45 -o 43 image
+	bin/kaforkl -s 12,45 -o 43 image
 
